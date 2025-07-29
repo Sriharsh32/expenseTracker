@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./ExpenseTracker.css"; // External styles for modern look
 
 function ExpenseTracker() {
   const [expenses, setExpenses] = useState([]);
@@ -11,9 +12,7 @@ function ExpenseTracker() {
   const [note, setNote] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
   const [search, setSearch] = useState("");
-  const [monthlyBudget, setMonthlyBudget] = useState(
-    localStorage.getItem("budget") || ""
-  );
+  const [monthlyBudget, setMonthlyBudget] = useState(localStorage.getItem("budget") || "");
 
   const defaultCategories = [
     "Food",
@@ -125,151 +124,150 @@ function ExpenseTracker() {
   const total = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
 
   return (
-    <div className="container mt-5">
-      <h2 className="text-center mb-4 fw-bold">Expense Tracker</h2>
+    <div className="app-background">
+      <div className="container p-4 bg-white rounded shadow-lg mt-5">
+        <h2 className="text-center fw-bold mb-4 gradient-text">💸 Expense Tracker</h2>
 
-      <div className="row g-3 align-items-center mb-4">
-        <div className="col-md-2">
+        <div className="row g-3 mb-3">
+          <div className="col-md-2">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Amount"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              min="0"
+            />
+          </div>
+
+          <div className="col-md-2">
+            <select
+              className="form-select"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value="">Select Category</option>
+              {defaultCategories.map((cat, idx) => (
+                <option key={idx} value={cat}>
+                  {cat}
+                </option>
+              ))}
+              <option value="__custom__">Custom</option>
+            </select>
+          </div>
+
+          {category === "__custom__" && (
+            <div className="col-md-2">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Custom Category"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+              />
+            </div>
+          )}
+
+          <div className="col-md-4 d-flex">
+            <input
+              type="text"
+              className="form-control me-2"
+              placeholder="Note (optional)"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
+            <button className="btn btn-dark fw-bold" onClick={addOrUpdateExpense}>
+              {editingIndex !== null ? "Update" : "Add"}
+            </button>
+          </div>
+        </div>
+
+        <div className="d-flex flex-wrap justify-content-between mb-3 gap-3">
           <input
             type="text"
-            className="form-control form-control-lg"
-            placeholder="Amount"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            className="form-control flex-grow-1"
+            placeholder="Search by category or note"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ minWidth: "250px" }}
+          />
+          <input
+            type="text"
+            className="form-control"
+            style={{ maxWidth: "200px" }}
+            placeholder="Set Monthly Budget"
+            value={monthlyBudget}
+            onChange={(e) => setMonthlyBudget(e.target.value)}
             min="0"
           />
         </div>
 
-        <div className="col-md-2">
-          <select
-            className="form-select form-select-lg"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="">Select Category</option>
-            {defaultCategories.map((cat, idx) => (
-              <option key={idx} value={cat}>
-                {cat}
-              </option>
-            ))}
-            <option value="__custom__">Custom</option>
-          </select>
+        <div className="bg-light p-3 rounded shadow-sm mb-3">
+          <h5 className="mb-0">
+            Total: <span className="fw-bold">₹{total.toFixed(2)}</span> | This Month:{" "}
+            <span className="fw-bold">₹{spentThisMonth.toFixed(2)}</span>{" "}
+            {monthlyBudget && (
+              <>
+                | Budget: <span className="fw-bold">₹{monthlyBudget}</span>{" "}
+                <span
+                  className={
+                    spentThisMonth > monthlyBudget ? "text-danger" : "text-success"
+                  }
+                >
+                  ({spentThisMonth > monthlyBudget ? "Exceeded" : "Within Limit"})
+                </span>
+              </>
+            )}
+          </h5>
         </div>
 
-        {category === "__custom__" && (
-          <div className="col-md-2">
-            <input
-              type="text"
-              className="form-control form-control-lg"
-              placeholder="Custom Category"
-              value={customCategory}
-              onChange={(e) => setCustomCategory(e.target.value)}
-            />
-          </div>
-        )}
-
-        <div className="col-md-4 d-flex align-items-center">
-          <input
-            type="text"
-            className="form-control form-control-lg me-3"
-            placeholder="Note (optional)"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-          />
-          <button
-            className="btn btn-success btn-lg px-4"
-            onClick={addOrUpdateExpense}
-            style={{ whiteSpace: "nowrap" }}
-          >
-            {editingIndex !== null ? "Update" : "Add"}
-          </button>
-        </div>
-      </div>
-
-      <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3">
-        <input
-          type="text"
-          className="form-control me-3 flex-grow-1"
-          style={{ minWidth: "250px" }}
-          placeholder="Search by category or note"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <input
-          type="text"
-          className="form-control"
-          style={{ maxWidth: "200px" }}
-          placeholder="Set Monthly Budget"
-          value={monthlyBudget}
-          onChange={(e) => setMonthlyBudget(e.target.value)}
-          min="0"
-        />
-      </div>
-
-      <h5 className="text-muted mb-3">
-        Total Expenses: <span className="fw-semibold">₹{total.toFixed(2)}</span> | This Month:{" "}
-        <span className="fw-semibold">₹{spentThisMonth.toFixed(2)}</span>{" "}
-        {monthlyBudget && (
-          <>
-            | Budget: <span className="fw-semibold">₹{monthlyBudget}</span>{" "}
-            <span
-              className={
-                spentThisMonth > monthlyBudget ? "text-danger" : "text-success"
-              }
-            >
-              ({spentThisMonth > monthlyBudget ? "Exceeded" : "Within Limit"})
-            </span>
-          </>
-        )}
-      </h5>
-
-      <div className="table-responsive shadow-sm rounded">
-        <table className="table table-hover table-bordered align-middle">
-          <thead className="table-light">
-            <tr>
-              <th>Date</th>
-              <th>Amount (₹)</th>
-              <th>Category</th>
-              <th>Note</th>
-              <th style={{ minWidth: "130px" }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredExpenses.length === 0 ? (
+        <div className="table-responsive">
+          <table className="table table-bordered table-hover rounded shadow-sm bg-white">
+            <thead className="table-dark text-white">
               <tr>
-                <td colSpan="5" className="text-center text-muted py-4">
-                  No expenses to show.
-                </td>
+                <th>Date</th>
+                <th>Amount (₹)</th>
+                <th>Category</th>
+                <th>Note</th>
+                <th style={{ minWidth: "130px" }}>Actions</th>
               </tr>
-            ) : (
-              filteredExpenses.map((e, i) => (
-                <tr key={i}>
-                  <td>{e.date}</td>
-                  <td>{e.amount.toFixed(2)}</td>
-                  <td>{e.category}</td>
-                  <td>{e.note}</td>
-                  <td>
-                    <button
-                      className="btn btn-sm btn-outline-warning me-2"
-                      onClick={() => editExpense(i)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={() => deleteExpense(i)}
-                    >
-                      Delete
-                    </button>
+            </thead>
+            <tbody>
+              {filteredExpenses.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="text-center text-muted py-4">
+                    No expenses to show.
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                filteredExpenses.map((e, i) => (
+                  <tr key={i}>
+                    <td>{e.date}</td>
+                    <td>{e.amount.toFixed(2)}</td>
+                    <td>{e.category}</td>
+                    <td>{e.note}</td>
+                    <td>
+                      <button
+                        className="btn btn-sm btn-outline-primary me-2"
+                        onClick={() => editExpense(i)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => deleteExpense(i)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+        <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar />
       </div>
-
-      <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar />
     </div>
   );
 }

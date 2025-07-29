@@ -13,7 +13,7 @@ export default function App() {
           <div className="collapse navbar-collapse">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item"><Link className="nav-link" to="/">Home</Link></li>
-              <li className="nav-item"><Link className="nav-link" to="/category">Expenses by Category</Link></li>
+              <li className="nav-item"><Link className="!nav-link" to="/category">Expenses by Category</Link></li>
               <li className="nav-item"><Link className="nav-link" to="/trends">Monthly Trends</Link></li>
               <li className="nav-item"><Link className="nav-link" to="/about">About</Link></li>
             </ul>
@@ -29,7 +29,7 @@ export default function App() {
       </Routes>
 
       <footer className="text-center py-3 mt-5 bg-light text-muted">
-        © {new Date().getFullYear()} Expense Tracker. All rights reserved.
+        © {new Date().getFullYear()}  All rights reserved by Sriharsh.
       </footer>
     </Router>
   );
