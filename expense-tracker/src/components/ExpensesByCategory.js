@@ -14,12 +14,19 @@ export default function ExpensesByCategory() {
   const [categoryTotals, setCategoryTotals] = useState({});
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("expenses") || "[]");
-    const totals = stored.reduce((acc, curr) => {
-      acc[curr.category] = (acc[curr.category] || 0) + curr.amount;
-      return acc;
-    }, {});
-    setCategoryTotals(totals);
+    try {
+      const stored = JSON.parse(localStorage.getItem("expenses") || "[]");
+      const totals = stored.reduce((acc, curr) => {
+        const amount = parseFloat(curr.amount);
+        if (!isNaN(amount)) {
+          acc[curr.category] = (acc[curr.category] || 0) + amount;
+        }
+        return acc;
+      }, {});
+      setCategoryTotals(totals);
+    } catch (err) {
+      console.error("Error parsing expenses from localStorage:", err);
+    }
   }, []);
 
   const pieData = {
@@ -29,20 +36,45 @@ export default function ExpensesByCategory() {
         label: "Expenses by Category",
         data: Object.values(categoryTotals),
         backgroundColor: [
-          "#4dc9f6", "#f67019", "#f53794", "#537bc4", "#acc236",
-          "#166a8f", "#00a950", "#58595b", "#8549ba",
+          "#4dc9f6", "#f67019", "#f53794", "#537bc4",
+          "#acc236", "#166a8f", "#00a950", "#58595b", "#8549ba",
         ],
+        borderColor: "#fff",
+        borderWidth: 2,
       },
     ],
   };
 
+  const pieOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          font: { size: 14 },
+        },
+      },
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            const label = context.label || "";
+            const value = context.parsed;
+            return `${label}: ₹${value.toFixed(2)}`;
+          },
+        },
+      },
+    },
+  };
+
   return (
     <div className="container mt-5">
-      <h2 className="mb-4 text-center">Expenses by Category</h2>
+      <h2 className="mb-4 text-center gradient-text">📊 Expenses by Category</h2>
       {Object.keys(categoryTotals).length === 0 ? (
         <p className="text-muted text-center">No data to show chart.</p>
       ) : (
-        <Pie data={pieData} />
+        <div className="chart-wrapper mx-auto" style={{ maxWidth: "500px" }}>
+          <Pie data={pieData} options={pieOptions} />
+        </div>
       )}
     </div>
   );

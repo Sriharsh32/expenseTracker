@@ -1,25 +1,70 @@
+/* App container background */
 .app-background {
   background: linear-gradient(to right, #c9d6ff, #e2e2e2);
   min-height: 100vh;
   padding: 30px 0;
 }
 
+/* Gradient header text */
 .gradient-text {
   background: linear-gradient(to right, #3a7bd5, #00d2ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  font-weight: bold;
 }
 
-.btn-dark {
-  background-color: #343a40;
-  border: none;
+/* Dark primary button */
+.btn-dark,
+.btn.btn-primary {
+  background-color: #343a40 !important;
+  border: none !important;
+  color: #fff !important;
+  transition: background-color 0.2s ease;
 }
 
-.btn-dark:hover {
-  background-color: #212529;
+.btn-dark:hover,
+.btn.btn-primary:hover {
+  background-color: #212529 !important;
 }
 
+/* Input and Select font styling */
 input::placeholder,
-select {
+select,
+input,
+textarea {
   font-size: 14px;
+}
+
+/* Table styling */
+table.table {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table thead th {
+  vertical-align: middle;
+  background-color: #343a40;
+  color: white;
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f3f5;
+}
+
+/* Rounded form controls */
+input.form-control,
+select.form-select,
+button.btn {
+  border-radius: 8px !important;
+}
+
+/* Action buttons spacing */
+.btn + .btn {
+  margin-left: 5px;
+}
+
+/* Optional: Toast notification z-index fix */
+.Toastify__toast-container {
+  z-index: 9999;
 }

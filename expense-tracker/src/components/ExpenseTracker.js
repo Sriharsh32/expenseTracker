@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./ExpenseTracker.css"; // External styles for modern look
+import "./ExpenseTracker.css";
 
 function ExpenseTracker() {
   const [expenses, setExpenses] = useState([]);
@@ -124,23 +124,24 @@ function ExpenseTracker() {
   const total = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
 
   return (
-    <div className="app-background">
-      <div className="container p-4 bg-white rounded shadow-lg mt-5">
+    <div className="app-background py-4 px-2 px-md-5">
+      <div className="container bg-white rounded-4 shadow p-4">
         <h2 className="text-center fw-bold mb-4 gradient-text">💸 Expense Tracker</h2>
 
-        <div className="row g-3 mb-3">
+        <div className="row gy-3 mb-3 align-items-end">
           <div className="col-md-2">
+            <label className="form-label">Amount (₹)</label>
             <input
-              type="text"
+              type="number"
               className="form-control"
-              placeholder="Amount"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               min="0"
             />
           </div>
 
-          <div className="col-md-2">
+          <div className="col-md-3">
+            <label className="form-label">Category</label>
             <select
               className="form-select"
               value={category}
@@ -157,86 +158,89 @@ function ExpenseTracker() {
           </div>
 
           {category === "__custom__" && (
-            <div className="col-md-2">
+            <div className="col-md-3">
+              <label className="form-label">Custom Category</label>
               <input
                 type="text"
                 className="form-control"
-                placeholder="Custom Category"
                 value={customCategory}
                 onChange={(e) => setCustomCategory(e.target.value)}
               />
             </div>
           )}
 
-          <div className="col-md-4 d-flex">
-            <input
-              type="text"
-              className="form-control me-2"
-              placeholder="Note (optional)"
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-            />
-            <button className="btn btn-dark fw-bold" onClick={addOrUpdateExpense}>
-              {editingIndex !== null ? "Update" : "Add"}
-            </button>
+          <div className="col-md-4">
+            <label className="form-label">Note</label>
+            <div className="input-group">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Optional note"
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+              />
+              <button className="btn btn-primary fw-bold" onClick={addOrUpdateExpense}>
+                {editingIndex !== null ? "Update" : "Add"}
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="d-flex flex-wrap justify-content-between mb-3 gap-3">
-          <input
-            type="text"
-            className="form-control flex-grow-1"
-            placeholder="Search by category or note"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            style={{ minWidth: "250px" }}
-          />
-          <input
-            type="text"
-            className="form-control"
-            style={{ maxWidth: "200px" }}
-            placeholder="Set Monthly Budget"
-            value={monthlyBudget}
-            onChange={(e) => setMonthlyBudget(e.target.value)}
-            min="0"
-          />
+        <div className="row g-3 mb-4">
+          <div className="col-md-6">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search by category or note"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <div className="col-md-6">
+            <input
+              type="number"
+              className="form-control"
+              placeholder="Set Monthly Budget"
+              value={monthlyBudget}
+              onChange={(e) => setMonthlyBudget(e.target.value)}
+              min="0"
+            />
+          </div>
         </div>
 
-        <div className="bg-light p-3 rounded shadow-sm mb-3">
-          <h5 className="mb-0">
-            Total: <span className="fw-bold">₹{total.toFixed(2)}</span> | This Month:{" "}
-            <span className="fw-bold">₹{spentThisMonth.toFixed(2)}</span>{" "}
-            {monthlyBudget && (
-              <>
-                | Budget: <span className="fw-bold">₹{monthlyBudget}</span>{" "}
-                <span
-                  className={
-                    spentThisMonth > monthlyBudget ? "text-danger" : "text-success"
-                  }
-                >
-                  ({spentThisMonth > monthlyBudget ? "Exceeded" : "Within Limit"})
-                </span>
-              </>
-            )}
-          </h5>
+        <div className="alert alert-light border rounded mb-4">
+          <strong>Total:</strong> ₹{total.toFixed(2)} | <strong>This Month:</strong> ₹
+          {spentThisMonth.toFixed(2)}{" "}
+          {monthlyBudget && (
+            <>
+              | <strong>Budget:</strong> ₹{monthlyBudget}{" "}
+              <span
+                className={`fw-bold ${
+                  spentThisMonth > monthlyBudget ? "text-danger" : "text-success"
+                }`}
+              >
+                ({spentThisMonth > monthlyBudget ? "Exceeded" : "Within Limit"})
+              </span>
+            </>
+          )}
         </div>
 
         <div className="table-responsive">
-          <table className="table table-bordered table-hover rounded shadow-sm bg-white">
-            <thead className="table-dark text-white">
+          <table className="table table-hover table-bordered align-middle">
+            <thead className="table-dark">
               <tr>
                 <th>Date</th>
                 <th>Amount (₹)</th>
                 <th>Category</th>
                 <th>Note</th>
-                <th style={{ minWidth: "130px" }}>Actions</th>
+                <th style={{ minWidth: "140px" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredExpenses.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="text-center text-muted py-4">
-                    No expenses to show.
+                    No expenses found.
                   </td>
                 </tr>
               ) : (
